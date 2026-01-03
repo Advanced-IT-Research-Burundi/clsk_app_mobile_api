@@ -14,7 +14,7 @@ class ProductController extends Controller
      */
     public function index()
     {
-        $products = Product::with(['category.type', 'devise', 'user', 'photos'])->get();
+        $products = Product::with(['category.type', 'devise', 'user', 'photos'])->latest()->paginate();
         return ProductResource::collection($products);
     }
 
@@ -30,21 +30,24 @@ class ProductController extends Controller
             'quantity' => 'required|integer',
             'packaging' => 'nullable|string',
             'exchange_rate' => 'nullable|numeric',
-            'photos' => 'nullable|array',
+            'photo' => 'nullable|file|image',
             'date' => 'required|date',
             'category_id' => 'required|exists:categories,id',
             'devise_id' => 'required|exists:devises,id',
         ]);
 
+
+
         $product = Product::create([
-            ...$request->except('photos'),
+            ...$request->except('photo'),
             'user_id' => $request->user()->id,
         ]);
 
-        if ($request->has('photos')) {
-            foreach ($request->photos as $url) {
-                $product->photos()->create(['url' => $url]);
-            }
+        // Handle photo upload if provided
+        if ($request->hasFile('photo')) {
+            $imageName = time().'.'.$request->photo->extension();
+            $path = $request->file('photo')->mouve('uploads/products', $imageName);
+            $product->photos()->create(['url' => $path]);
         }
 
         return new ProductResource($product->load(['category.type', 'devise', 'photos']));
