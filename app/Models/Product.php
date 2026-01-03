@@ -17,7 +17,6 @@ class Product extends Model
         'quantity',
         'packaging',
         'exchange_rate',
-        'photos',
         'date',
         'user_id',
         'category_id',
@@ -25,7 +24,6 @@ class Product extends Model
     ];
 
     protected $casts = [
-        'photos' => 'array',
         'date' => 'date',
         'price' => 'decimal:2',
         'exchange_rate' => 'decimal:2',
@@ -44,5 +42,10 @@ class Product extends Model
     public function devise()
     {
         return $this->belongsTo(Devise::class);
+    }
+
+    public function photos()
+    {
+        return $this->hasMany(Photo::class);
     }
 }

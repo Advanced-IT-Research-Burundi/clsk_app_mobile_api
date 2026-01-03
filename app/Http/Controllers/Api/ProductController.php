@@ -14,7 +14,7 @@ class ProductController extends Controller
      */
     public function index()
     {
-        $products = Product::with(['category.type', 'devise', 'user'])->get();
+        $products = Product::with(['category.type', 'devise', 'user', 'photos'])->get();
         return ProductResource::collection($products);
     }
 
@@ -37,11 +37,17 @@ class ProductController extends Controller
         ]);
 
         $product = Product::create([
-            ...$request->all(),
+            ...$request->except('photos'),
             'user_id' => $request->user()->id,
         ]);
 
-        return new ProductResource($product->load(['category.type', 'devise']));
+        if ($request->has('photos')) {
+            foreach ($request->photos as $url) {
+                $product->photos()->create(['url' => $url]);
+            }
+        }
+
+        return new ProductResource($product->load(['category.type', 'devise', 'photos']));
     }
 
     /**
@@ -49,7 +55,7 @@ class ProductController extends Controller
      */
     public function show(string $id)
     {
-        $product = Product::with(['category.type', 'devise', 'user'])->findOrFail($id);
+        $product = Product::with(['category.type', 'devise', 'user', 'photos'])->findOrFail($id);
         return new ProductResource($product);
     }
 
@@ -72,9 +78,16 @@ class ProductController extends Controller
         ]);
 
         $product = Product::findOrFail($id);
-        $product->update($request->all());
+        $product->update($request->except('photos'));
 
-        return new ProductResource($product->load(['category.type', 'devise']));
+        if ($request->has('photos')) {
+            $product->photos()->delete(); // Remove old photos
+            foreach ($request->photos as $url) {
+                $product->photos()->create(['url' => $url]);
+            }
+        }
+
+        return new ProductResource($product->load(['category.type', 'devise', 'photos']));
     }
 
     /**

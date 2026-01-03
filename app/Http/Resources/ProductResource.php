@@ -26,7 +26,7 @@ class ProductResource extends JsonResource
             'type' => $this->category && $this->category->type ? $this->category->type->name : null,
             'category' => $this->category ? $this->category->name : null,
             'packaging' => $this->packaging,
-            'photo' => $this->photos ?? [],
+            'photo' => $this->photos->pluck('url'),
             'date' => $this->date->format('Y-m-d'),
         ];
     }
