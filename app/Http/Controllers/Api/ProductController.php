@@ -46,7 +46,7 @@ class ProductController extends Controller
         // Handle photo upload if provided
         if ($request->hasFile('photo')) {
             $imageName = time().'.'.$request->photo->extension();
-            $path = $request->file('photo')->mouve('uploads/products', $imageName);
+            $path = $request->file('photo')->move('uploads/products', $imageName);
             $product->photos()->create(['url' => $path]);
         }
 
