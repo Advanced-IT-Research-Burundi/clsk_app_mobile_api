@@ -101,4 +101,98 @@ class ProductController extends Controller
 
         return response()->json(['message' => 'Product deleted successfully']);
     }
+
+    /**
+     * Generate a report of products (JSON)
+     */
+    public function report(Request $request)
+    {
+        $query = Product::with(['category.type', 'devise', 'user', 'photos'])->latest();
+
+        if ($request->filled('start_date')) {
+            $query->whereDate('date', '>=', $request->input('start_date'));
+        }
+        if ($request->filled('end_date')) {
+            $query->whereDate('date', '<=', $request->input('end_date'));
+        }
+        if ($request->filled('category_id')) {
+            $query->where('category_id', $request->input('category_id'));
+        }
+        if ($request->filled('devise_id')) {
+            $query->where('devise_id', $request->input('devise_id'));
+        }
+
+        $products = $query->get();
+
+        $data = $products->map(function (Product $p) {
+            return [
+                'id' => (string) $p->id,
+                'name' => $p->name,
+                'description' => $p->description,
+                'price' => $p->price + 0,
+                'currency' => $p->devise ? $p->devise->code : null,
+                'quantity' => $p->quantity,
+                'exchangeRate' => $p->exchange_rate + 0,
+                'convertedPrice' => ($p->price * ($p->exchange_rate ?? 1)) + 0,
+                'type' => $p->category && $p->category->type ? $p->category->type->name : null,
+                'category' => $p->category ? $p->category->name : null,
+                'packaging' => $p->packaging,
+                'photo' => $p->photos->map(fn($ph) => url($ph->url))->toArray(),
+                'date' => $p->date ? $p->date->format('Y-m-d') : null,
+            ];
+        });
+
+        return response()->json($data->values());
+    }
+
+    /**
+     * Export the products report as CSV
+     */
+    public function exportReport(Request $request)
+    {
+        $query = Product::with(['category.type', 'devise', 'user', 'photos'])->latest();
+
+        if ($request->filled('start_date')) {
+            $query->whereDate('date', '>=', $request->input('start_date'));
+        }
+        if ($request->filled('end_date')) {
+            $query->whereDate('date', '<=', $request->input('end_date'));
+        }
+
+        $products = $query->get();
+
+        $callback = function () use ($products) {
+            $out = fopen('php://output', 'w');
+            fputcsv($out, [
+                'id', 'name', 'description', 'price', 'currency', 'quantity', 'exchangeRate', 'convertedPrice', 'type', 'category', 'packaging', 'photo', 'date'
+            ]);
+
+            foreach ($products as $p) {
+                $photos = $p->photos->map(fn($ph) => url($ph->url))->toArray();
+                $row = [
+                    $p->id,
+                    $p->name,
+                    $p->description,
+                    $p->price + 0,
+                    $p->devise ? $p->devise->code : '',
+                    $p->quantity,
+                    $p->exchange_rate + 0,
+                    ($p->price * ($p->exchange_rate ?? 1)) + 0,
+                    $p->category && $p->category->type ? $p->category->type->name : '',
+                    $p->category ? $p->category->name : '',
+                    $p->packaging,
+                    implode('|', $photos),
+                    $p->date ? $p->date->format('Y-m-d') : '',
+                ];
+
+                fputcsv($out, $row);
+            }
+
+            fclose($out);
+        };
+
+        return response()->streamDownload($callback, 'products-report.csv', [
+            'Content-Type' => 'text/csv',
+        ]);
+    }
 }
