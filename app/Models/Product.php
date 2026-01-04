@@ -19,6 +19,7 @@ class Product extends Model
         'exchange_rate',
         'date',
         'user_id',
+        'supplier_id',
         'category_id',
         'devise_id',
     ];
@@ -47,5 +48,10 @@ class Product extends Model
     public function photos()
     {
         return $this->hasMany(Photo::class);
+    }
+
+    public function supplier()
+    {
+        return $this->belongsTo(Supplier::class);
     }
 }

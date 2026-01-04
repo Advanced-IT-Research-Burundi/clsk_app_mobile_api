@@ -22,7 +22,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('devises', DeviseController::class);
     Route::apiResource('products', ProductController::class);
     // Product reports
-    Route::get('products/report', [ProductController::class, 'report']);
+    // Route::get('products/report', [ProductController::class, 'report']);
+    Route::get('product_reportss', [ProductController::class,'report']);
     Route::post('products/report', [ProductController::class, 'report']); // allow filters in POST body
     Route::get('products/report/export', [ProductController::class, 'exportReport']);
 });

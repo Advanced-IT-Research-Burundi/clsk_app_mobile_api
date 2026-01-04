@@ -107,7 +107,7 @@ class ProductController extends Controller
      */
     public function report(Request $request)
     {
-        $query = Product::with(['category.type', 'devise', 'user', 'photos'])->latest();
+        $query = Product::with(['category', 'devise', 'user', 'photos'])->latest();
 
         if ($request->filled('start_date')) {
             $query->whereDate('date', '>=', $request->input('start_date'));
