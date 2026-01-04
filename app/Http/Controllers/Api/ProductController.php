@@ -36,8 +36,6 @@ class ProductController extends Controller
             'devise_id' => 'required|exists:devises,id',
         ]);
 
-
-
         $product = Product::create([
             ...$request->except('photo'),
             'user_id' => $request->user()->id,

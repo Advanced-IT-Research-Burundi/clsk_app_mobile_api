@@ -8,12 +8,22 @@ use Illuminate\Http\Resources\Json\JsonResource;
 class ProductResource extends JsonResource
 {
     /**
-     * Transform the resource into an array.
-     *
-     * @return array<string, mixed>
-     */
+    * Transform the resource into an array.
+    *
+    * @return array<string, mixed>
+    */
     public function toArray(Request $request): array
     {
+        $urlsImages = $this->photos->pluck('url');
+        $urlsImages = collect($urlsImages)->map(function ($url) {
+            // check if is not a valid url 
+            if (filter_var($url, FILTER_VALIDATE_URL)) {
+                return $url;
+            } else {
+                return asset($url); 
+            }
+            //return url($url);
+        });
         return [
             'id' => (string) $this->id,
             'name' => $this->name,
@@ -26,7 +36,7 @@ class ProductResource extends JsonResource
             'type' => $this->category && $this->category->type ? $this->category->type->name : null,
             'category' => $this->category ? $this->category->name : null,
             'packaging' => $this->packaging,
-            'photo' => $this->photos->pluck('url'),
+            'photo' => $urlsImages,
             'date' => $this->date->format('Y-m-d'),
         ];
     }
