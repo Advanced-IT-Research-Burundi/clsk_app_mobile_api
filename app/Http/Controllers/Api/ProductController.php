@@ -87,7 +87,7 @@ class ProductController extends Controller
                 $product->photos()->create(['url' => $url]);
             }
         }
-
+        
         return new ProductResource($product->load(['category.type', 'devise', 'photos']));
     }
 
