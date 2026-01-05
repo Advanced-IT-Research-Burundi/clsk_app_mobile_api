@@ -23,6 +23,7 @@ class ProductController extends Controller
      */
     public function store(Request $request)
     {
+        
         $request->validate([
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
@@ -31,14 +32,19 @@ class ProductController extends Controller
             'packaging' => 'nullable|string',
             'exchange_rate' => 'nullable|numeric',
             'photo' => 'nullable|file|image',
-            'date' => 'required|date',
-            'category_id' => 'required|exists:categories,id',
-            'devise_id' => 'required|exists:devises,id',
+            //'date' => 'required|date',
+           //'category_id' => 'required|exists:categories,id',
+           // 'devise_id' => 'required|exists:devises,id',
+            'supplier_id' => 'nullable|exists:suppliers,id',
         ]);
 
         $product = Product::create([
             ...$request->except('photo'),
             'user_id' => $request->user()->id,
+            'date' => now(),
+           'category_id' => 1,
+            'devise_id' => 1,
+            
         ]);
 
         // Handle photo upload if provided

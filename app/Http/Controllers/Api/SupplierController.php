@@ -13,6 +13,16 @@ class SupplierController extends Controller
      */
     public function index()
     {
+        $search = request("search");
+        if ($search) {
+            $suppliers = Supplier::where('name', 'like', "%$search%")
+                ->orWhere('email', 'like', "%$search%")
+                ->orWhere('phone', 'like', "%$search%")
+                ->latest()
+                ->paginate();
+            return response()->json($suppliers);
+        }
+
         $suppliers = Supplier::latest()->paginate();
         return response()->json($suppliers);
     }
@@ -28,6 +38,7 @@ class SupplierController extends Controller
             'address' => 'nullable|string',
             'email' => 'nullable|email|max:255',
             'description' => 'nullable|string',
+            
         ]);
 
         $supplier = Supplier::create($request->all());
