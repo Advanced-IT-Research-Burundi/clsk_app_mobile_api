@@ -4,6 +4,7 @@ use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\CategoryController;
 use App\Http\Controllers\Api\DeviseController;
 use App\Http\Controllers\Api\ProductController;
+use App\Http\Controllers\Api\SupplierController;
 use App\Http\Controllers\Api\TypeController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -21,6 +22,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('types', TypeController::class);
     Route::apiResource('devises', DeviseController::class);
     Route::apiResource('products', ProductController::class);
+    Route::apiResource('suppliers', SupplierController::class);
     // Product reports
     // Route::get('products/report', [ProductController::class, 'report']);
     Route::get('product_reportss', [ProductController::class,'report']);
