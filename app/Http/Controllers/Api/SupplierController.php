@@ -13,6 +13,16 @@ class SupplierController extends Controller
      */
     public function index()
     {
+        $search = request()->query('search');
+        if ($search) {
+            $suppliers = Supplier::
+            where('name', 'like', '%' . $search . '%')
+            ->orWhere('phone', 'like', '%' . $search . '%')
+            ->orWhere('email', 'like', '%' . $search . '%')
+            ->orWhere('address', 'like', '%' . $search . '%')
+            ->latest()->paginate();
+            return response()->json($suppliers);
+        }
         $suppliers = Supplier::latest()->paginate();
         return response()->json($suppliers);
     }
