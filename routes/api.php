@@ -23,6 +23,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('devises', DeviseController::class);
     Route::apiResource('products', ProductController::class);
     Route::apiResource('suppliers', SupplierController::class);
+    Route::post('/change-password', [AuthController::class, 'changePassword']);
     // Product reports
     // Route::get('products/report', [ProductController::class, 'report']);
     Route::get('product_reportss', [ProductController::class,'report']);

@@ -14,7 +14,7 @@ class ProductController extends Controller
      */
     public function index()
     {
-        $products = Product::with(['category.type', 'devise', 'user', 'photos'])->latest()->paginate();
+        $products = Product::with(['category.type', 'devise', 'user', 'photos', 'supplier'])->latest()->paginate();
         return ProductResource::collection($products);
     }
 
@@ -62,7 +62,7 @@ class ProductController extends Controller
      */
     public function show(string $id)
     {
-        $product = Product::with(['category.type', 'devise', 'user', 'photos'])->findOrFail($id);
+        $product = Product::with(['category.type', 'devise', 'user', 'photos', 'supplier'])->findOrFail($id);
         return new ProductResource($product);
     }
 
@@ -113,7 +113,7 @@ class ProductController extends Controller
      */
     public function report(Request $request)
     {
-        $query = Product::with(['category', 'devise', 'user', 'photos'])->latest();
+        $query = Product::with(['category', 'devise', 'user', 'photos', 'supplier'])->latest();
 
         if ($request->filled('start_date')) {
             $query->whereDate('date', '>=', $request->input('start_date'));
