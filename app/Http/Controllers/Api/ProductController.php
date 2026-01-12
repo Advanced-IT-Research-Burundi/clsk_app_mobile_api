@@ -30,11 +30,13 @@ class ProductController extends Controller
             'price' => 'required|numeric',
             'quantity' => 'required|integer',
             'packaging' => 'nullable|string',
+            'unit_per_package' => 'nullable|integer',
+            'number_of_cartons' => 'nullable|integer',
             'exchange_rate' => 'nullable|numeric',
             'photo' => 'nullable|file|image',
             //'date' => 'required|date',
-           //'category_id' => 'required|exists:categories,id',
-           // 'devise_id' => 'required|exists:devises,id',
+            //'category_id' => 'required|exists:categories,id',
+            // 'devise_id' => 'required|exists:devises,id',
             'supplier_id' => 'nullable|exists:suppliers,id',
         ]);
 
@@ -42,9 +44,8 @@ class ProductController extends Controller
             ...$request->except('photo'),
             'user_id' => $request->user()->id,
             'date' => now(),
-           'category_id' => 1,
+            'category_id' => 1,
             'devise_id' => 1,
-            
         ]);
 
         // Handle photo upload if provided
@@ -77,6 +78,7 @@ class ProductController extends Controller
             'price' => 'required|numeric',
             'quantity' => 'required|integer',
             'packaging' => 'nullable|string',
+            'unit_per_package' => 'nullable|integer',
             'exchange_rate' => 'nullable|numeric',
             'photos' => 'nullable|array',
             'date' => 'required|date',
@@ -143,6 +145,8 @@ class ProductController extends Controller
                 'type' => $p->category && $p->category->type ? $p->category->type->name : null,
                 'category' => $p->category ? $p->category->name : null,
                 'packaging' => $p->packaging,
+                'unit_per_package' => $p->unit_per_package,
+                'number_of_cartons' => $p->number_of_cartons,
                 'photo' => $p->photos->map(fn($ph) => url($ph->url))->toArray(),
                 'date' => $p->date ? $p->date->format('Y-m-d') : null,
             ];
@@ -170,7 +174,7 @@ class ProductController extends Controller
         $callback = function () use ($products) {
             $out = fopen('php://output', 'w');
             fputcsv($out, [
-                'id', 'name', 'description', 'price', 'currency', 'quantity', 'exchangeRate', 'convertedPrice', 'type', 'category', 'packaging', 'photo', 'date'
+                'id', 'name', 'description', 'price', 'currency', 'quantity', 'exchangeRate', 'convertedPrice', 'type', 'category', 'packaging', 'unit_per_package', 'number_of_cartons', 'photo', 'date'
             ]);
 
             foreach ($products as $p) {
@@ -187,6 +191,8 @@ class ProductController extends Controller
                     $p->category && $p->category->type ? $p->category->type->name : '',
                     $p->category ? $p->category->name : '',
                     $p->packaging,
+                    $p->unit_per_package,
+                    $p->number_of_cartons,
                     implode('|', $photos),
                     $p->date ? $p->date->format('Y-m-d') : '',
                 ];

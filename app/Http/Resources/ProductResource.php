@@ -36,6 +36,8 @@ class ProductResource extends JsonResource
             'type' => $this->category && $this->category->type ? $this->category->type->name : null,
             'category' => $this->category ? $this->category->name : null,
             'packaging' => $this->packaging,
+            'unit_per_package' => (int) $this->unit_per_package,
+            'number_of_cartons' => (int) $this->number_of_cartons,
             'photo' => $urlsImages,
             'date' => $this->date->format('Y-m-d'),
         ];

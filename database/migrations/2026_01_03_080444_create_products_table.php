@@ -21,11 +21,10 @@ return new class extends Migration
             $table->decimal('exchange_rate', 15, 2)->default(1);
             $table->json('photos')->nullable();
             $table->date('date')->nullable();
-        
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->foreignId('category_id')->constrained()->onDelete('cascade');
             $table->foreignId('devise_id')->constrained()->onDelete('cascade');
-            
+            $table->integer('unit_per_package'); // Added unit_per_package field
             $table->softDeletes();
             $table->timestamps();
         });

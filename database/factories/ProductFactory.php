@@ -27,6 +27,7 @@ class ProductFactory extends Factory
             'user_id' => \App\Models\User::factory(),
             'category_id' => \App\Models\Category::factory(),
             'devise_id' => \App\Models\Devise::factory(),
+            'unit_per_package' => $this->faker->numberBetween(1, 12),
         ];
     }
 }

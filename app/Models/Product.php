@@ -22,12 +22,16 @@ class Product extends Model
         'supplier_id',
         'category_id',
         'devise_id',
+        'unit_per_package',
+        'number_of_cartons',
     ];
 
     protected $casts = [
         'date' => 'date',
         'price' => 'decimal:2',
         'exchange_rate' => 'decimal:2',
+        'unit_per_package' => 'integer',
+        'number_of_cartons' => 'integer',
     ];
 
     public function user()
