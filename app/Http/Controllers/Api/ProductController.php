@@ -148,6 +148,8 @@ class ProductController extends Controller
                 'unit_per_package' => $p->unit_per_package,
                 'number_of_cartons' => $p->number_of_cartons,
                 'photo' => $p->photos->map(fn($ph) => url($ph->url))->toArray(),
+                'supplier_id' => $p->supplier_id,
+                'supplier_name' => $p->supplier ? $p->supplier->name : null,
                 'date' => $p->date ? $p->date->format('Y-m-d') : null,
             ];
         });

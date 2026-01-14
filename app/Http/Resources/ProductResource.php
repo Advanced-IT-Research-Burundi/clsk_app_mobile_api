@@ -39,6 +39,8 @@ class ProductResource extends JsonResource
             'unit_per_package' => (int) $this->unit_per_package,
             'number_of_cartons' => (int) $this->number_of_cartons,
             'photo' => $urlsImages,
+            'supplier_id' => $this->supplier_id,
+            'supplier_name' => $this->supplier ? $this->supplier->name : null,
             'date' => $this->date->format('Y-m-d'),
         ];
     }
