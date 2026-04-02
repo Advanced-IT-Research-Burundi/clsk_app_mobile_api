@@ -24,6 +24,7 @@ class Product extends Model
         'devise_id',
         'unit_per_package',
         'number_of_cartons',
+        'is_archived',
     ];
 
     protected $casts = [
@@ -32,7 +33,18 @@ class Product extends Model
         'exchange_rate' => 'decimal:2',
         'unit_per_package' => 'integer',
         'number_of_cartons' => 'integer',
+        'is_archived' => 'boolean',
     ];
+
+    public function scopeActive($query)
+    {
+        return $query->where('is_archived', false);
+    }
+
+    public function scopeArchived($query)
+    {
+        return $query->where('is_archived', true);
+    }
 
     public function user()
     {

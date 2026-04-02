@@ -41,7 +41,8 @@ class ProductResource extends JsonResource
             'photo' => $urlsImages,
             'supplier_id' => $this->supplier_id,
             'supplier_name' => $this->supplier ? $this->supplier->name : null,
-            'date' => $this->date->format('Y-m-d'),
+            'date' => $this->date ? $this->date->format('Y-m-d') : null,
+            'is_archived' => (bool) $this->is_archived,
         ];
     }
 }

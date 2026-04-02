@@ -28,6 +28,7 @@ class ProductFactory extends Factory
             'category_id' => \App\Models\Category::factory(),
             'devise_id' => \App\Models\Devise::factory(),
             'unit_per_package' => $this->faker->numberBetween(1, 12),
+            'is_archived' => $this->faker->boolean(),
         ];
     }
 }

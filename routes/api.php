@@ -22,6 +22,12 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('types', TypeController::class);
     Route::apiResource('devises', DeviseController::class);
     Route::apiResource('products', ProductController::class);
+    Route::post('products/{product}/archive', [ProductController::class, 'archive']);
+    Route::post('products/{product}/unarchive', [ProductController::class, 'unarchive']);
+    Route::post('products/bulk-archive', [ProductController::class, 'bulkArchive']);
+    Route::post('products/bulk-unarchive', [ProductController::class, 'bulkUnarchive']);
+    Route::post('products/bulk-delete', [ProductController::class, 'bulkDelete']);
+    
     Route::apiResource('suppliers', SupplierController::class);
     Route::post('/change-password', [AuthController::class, 'changePassword']);
     // Product reports

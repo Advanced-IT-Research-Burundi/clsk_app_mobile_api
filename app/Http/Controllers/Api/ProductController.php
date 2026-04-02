@@ -12,9 +12,17 @@ class ProductController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $products = Product::with(['category.type', 'devise', 'user', 'photos', 'supplier'])->latest()->paginate();
+        $query = Product::with(['category.type', 'devise', 'user', 'photos', 'supplier'])->latest();
+        
+        if ($request->boolean('archived')) {
+            $query->archived();
+        } else {
+            $query->active();
+        }
+
+        $products = $query->paginate();
         return ProductResource::collection($products);
     }
 
@@ -108,6 +116,61 @@ class ProductController extends Controller
         $product->delete();
 
         return response()->json(['message' => 'Product deleted successfully']);
+    }
+
+    /**
+     * Archive the specified resource.
+     */
+    public function archive(string $id)
+    {
+        $product = Product::findOrFail($id);
+        $product->update(['is_archived' => true]);
+
+        return response()->json(['message' => 'Product archived successfully']);
+    }
+
+    /**
+     * Unarchive the specified resource.
+     */
+    public function unarchive(string $id)
+    {
+        $product = Product::findOrFail($id);
+        $product->update(['is_archived' => false]);
+
+        return response()->json(['message' => 'Product unarchived successfully']);
+    }
+
+    /**
+     * Bulk archive resources.
+     */
+    public function bulkArchive(Request $request)
+    {
+        $request->validate(['ids' => 'required|array', 'ids.*' => 'exists:products,id']);
+        Product::whereIn('id', $request->ids)->update(['is_archived' => true]);
+
+        return response()->json(['message' => 'Products archived successfully']);
+    }
+
+    /**
+     * Bulk unarchive resources.
+     */
+    public function bulkUnarchive(Request $request)
+    {
+        $request->validate(['ids' => 'required|array', 'ids.*' => 'exists:products,id']);
+        Product::whereIn('id', $request->ids)->update(['is_archived' => false]);
+
+        return response()->json(['message' => 'Products unarchived successfully']);
+    }
+
+    /**
+     * Bulk delete resources.
+     */
+    public function bulkDelete(Request $request)
+    {
+        $request->validate(['ids' => 'required|array', 'ids.*' => 'exists:products,id']);
+        Product::whereIn('id', $request->ids)->delete();
+
+        return response()->json(['message' => 'Products deleted successfully']);
     }
 
     /**
