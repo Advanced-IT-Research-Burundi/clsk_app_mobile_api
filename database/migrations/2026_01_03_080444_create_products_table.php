@@ -24,7 +24,7 @@ return new class extends Migration
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->foreignId('category_id')->constrained()->onDelete('cascade');
             $table->foreignId('devise_id')->constrained()->onDelete('cascade');
-            $table->integer('unit_per_package')->nullable(); // Added unit_per_package field
+            $table->integer('unit_per_package')->nullable()->default(1);
             $table->softDeletes();
             $table->timestamps();
         });
