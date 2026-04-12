@@ -91,4 +91,63 @@ class AuthController extends Controller
             'message' => 'Mot de passe changé avec succès.',
         ]);
     }
+    public function updateProfile(Request $request)
+    {
+        $user = $request->user();
+
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255|unique:users,email,' . $user->id,
+        ]);
+
+        $user->update([
+            'name' => $request->name,
+            'email' => $request->email,
+        ]);
+
+        return response()->json([
+            'message' => 'Profil mis à jour avec succès',
+            'user' => $user,
+        ]);
+    }
+
+    public function getUsers()
+    {
+        return response()->json(User::all());
+    }
+
+    public function addUser(Request $request)
+    {
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255|unique:users',
+            'password' => 'required|string|min:8',
+        ]);
+
+        $user = User::create([
+            'name' => $request->name,
+            'email' => $request->email,
+            'password' => Hash::make($request->password),
+        ]);
+
+        return response()->json([
+            'message' => 'Utilisateur ajouté avec succès',
+            'user' => $user,
+        ], 201);
+    }
+    public function updateUserData(Request $request, User $user)
+    {
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255|unique:users,email,' . $user->id,
+            'is_active' => 'sometimes|boolean',
+        ]);
+
+        $user->update($request->only('name', 'email', 'is_active'));
+
+        return response()->json([
+            'message' => 'Utilisateur mis à jour avec succès',
+            'user' => $user,
+        ]);
+    }
 }

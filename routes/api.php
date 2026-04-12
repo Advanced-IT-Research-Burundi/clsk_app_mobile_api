@@ -30,6 +30,10 @@ Route::middleware('auth:sanctum')->group(function () {
     
     Route::apiResource('suppliers', SupplierController::class);
     Route::post('/change-password', [AuthController::class, 'changePassword']);
+    Route::put('/update-profile', [AuthController::class, 'updateProfile']);
+    Route::get('/users', [AuthController::class, 'getUsers']);
+    Route::post('/users', [AuthController::class, 'addUser']);
+    Route::put('/users/{user}', [AuthController::class, 'updateUserData']);
     // Product reports
     // Route::get('products/report', [ProductController::class, 'report']);
     Route::get('product_reportss', [ProductController::class,'report']);
