@@ -14,7 +14,7 @@ class ProductController extends Controller
      */
     public function index(Request $request)
     {
-        $query = Product::with(['category.type', 'devise', 'user', 'photos', 'supplier'])->latest();
+        $query = Product::with(['category.type', 'devise', 'user', 'photos', 'supplier', 'container'])->latest();
         
         if ($request->boolean('archived')) {
             $query->archived();
@@ -43,8 +43,8 @@ class ProductController extends Controller
             'exchange_rate' => 'nullable|numeric',
             'photo' => 'nullable|file|image',
             //'date' => 'required|date',
-            //'category_id' => 'required|exists:categories,id',
-            // 'devise_id' => 'required|exists:devises,id',
+            'category_id' => 'nullable|exists:categories,id',
+            'devise_id' => 'required|exists:devises,id',
             'supplier_id' => 'nullable|exists:suppliers,id',
         ]);
 
@@ -52,8 +52,8 @@ class ProductController extends Controller
             ...$request->except('photo'),
             'user_id' => $request->user()->id,
             'date' => now(),
-            'category_id' => 1,
-            'devise_id' => 1,
+            // 'category_id' => 1,
+            // 'devise_id' => 1,
         ]);
 
         // Handle photo upload if provided
@@ -71,7 +71,7 @@ class ProductController extends Controller
      */
     public function show(string $id)
     {
-        $product = Product::with(['category.type', 'devise', 'user', 'photos', 'supplier'])->findOrFail($id);
+        $product = Product::with(['category.type', 'devise', 'user', 'photos', 'supplier', 'container'])->findOrFail($id);
         return new ProductResource($product);
     }
 
@@ -121,12 +121,27 @@ class ProductController extends Controller
     /**
      * Archive the specified resource.
      */
-    public function archive(string $id)
+    public function archive(Request $request, string $id)
     {
         $product = Product::findOrFail($id);
-        $product->update(['is_archived' => true]);
+        
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'serial_number' => 'required|string|max:255',
+            'description' => 'nullable|string'
+        ]);
 
-        return response()->json(['message' => 'Product archived successfully']);
+        $container = \App\Models\Container::firstOrCreate(
+            ['serial_number' => $request->serial_number],
+            ['name' => $request->name, 'description' => $request->description]
+        );
+
+        $product->update([
+            'is_archived' => true,
+            'container_id' => $container->id
+        ]);
+
+        return response()->json(['message' => 'Product archived successfully', 'container' => $container]);
     }
 
     /**
@@ -135,7 +150,10 @@ class ProductController extends Controller
     public function unarchive(string $id)
     {
         $product = Product::findOrFail($id);
-        $product->update(['is_archived' => false]);
+        $product->update([
+            'is_archived' => false,
+            'container_id' => null
+        ]);
 
         return response()->json(['message' => 'Product unarchived successfully']);
     }
@@ -145,8 +163,23 @@ class ProductController extends Controller
      */
     public function bulkArchive(Request $request)
     {
-        $request->validate(['ids' => 'required|array', 'ids.*' => 'exists:products,id']);
-        Product::whereIn('id', $request->ids)->update(['is_archived' => true]);
+        $request->validate([
+            'ids' => 'required|array', 
+            'ids.*' => 'exists:products,id',
+            'name' => 'required|string|max:255',
+            'serial_number' => 'required|string|max:255',
+            'description' => 'nullable|string'
+        ]);
+
+        $container = \App\Models\Container::firstOrCreate(
+            ['serial_number' => $request->serial_number],
+            ['name' => $request->name, 'description' => $request->description]
+        );
+
+        Product::whereIn('id', $request->ids)->update([
+            'is_archived' => true,
+            'container_id' => $container->id
+        ]);
 
         return response()->json(['message' => 'Products archived successfully']);
     }
@@ -157,7 +190,10 @@ class ProductController extends Controller
     public function bulkUnarchive(Request $request)
     {
         $request->validate(['ids' => 'required|array', 'ids.*' => 'exists:products,id']);
-        Product::whereIn('id', $request->ids)->update(['is_archived' => false]);
+        Product::whereIn('id', $request->ids)->update([
+            'is_archived' => false,
+            'container_id' => null
+        ]);
 
         return response()->json(['message' => 'Products unarchived successfully']);
     }

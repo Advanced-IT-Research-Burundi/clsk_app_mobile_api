@@ -25,5 +25,11 @@ class UserSeeder extends Seeder
             'email' => 'irumvabric@gmail.com',
             'password' => Hash::make('password'),
         ]);
+
+        User::create([
+            'name' => 'Niyo Jean',
+            'email' => 'niyojean303030@gmail.com',
+            'password' => Hash::make('303030'),
+        ]);
     }
 }

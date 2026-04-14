@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\CategoryController;
+use App\Http\Controllers\Api\ContainerController;
 use App\Http\Controllers\Api\DeviseController;
 use App\Http\Controllers\Api\ProductController;
 use App\Http\Controllers\Api\SupplierController;
@@ -29,6 +30,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('products/bulk-delete', [ProductController::class, 'bulkDelete']);
     
     Route::apiResource('suppliers', SupplierController::class);
+    Route::get('containers', [ContainerController::class, 'index']);
+    Route::get('containers/{id}', [ContainerController::class, 'show']);
     Route::post('/change-password', [AuthController::class, 'changePassword']);
     Route::put('/update-profile', [AuthController::class, 'updateProfile']);
     Route::get('/users', [AuthController::class, 'getUsers']);

@@ -29,6 +29,7 @@ class ProductResource extends JsonResource
             'name' => $this->name,
             'description' => $this->description,
             'price' => (float) $this->price,
+            'devise_id' => $this->devise_id,
             'currency' => $this->devise ? $this->devise->code : null,
             'quantity' => $this->quantity,
             'exchangeRate' => (float) $this->exchange_rate,
@@ -40,9 +41,14 @@ class ProductResource extends JsonResource
             'number_of_cartons' => (int) $this->number_of_cartons,
             'photo' => $urlsImages,
             'supplier_id' => $this->supplier_id,
+            'supplier' => $this->supplier,
+
             'supplier_name' => $this->supplier ? $this->supplier->name : null,
             'date' => $this->date ? $this->date->format('Y-m-d') : null,
             'is_archived' => (bool) $this->is_archived,
+            'container_id' => $this->container_id,
+            'container_name' => $this->container ? $this->container->name : null,
+            'container_serial' => $this->container ? $this->container->serial_number : null,
         ];
     }
 }

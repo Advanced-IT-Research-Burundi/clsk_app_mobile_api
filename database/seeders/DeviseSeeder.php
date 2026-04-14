@@ -15,7 +15,7 @@ class DeviseSeeder extends Seeder
     {
         $devises = [
             ['name' => 'Dollar', 'code' => 'USD', 'symbol' => '$'],
-            ['name' => 'Bif', 'code' => 'BIF', 'symbol' => 'Frw'],
+            ['name' => 'Bif', 'code' => 'BIF', 'symbol' => 'Fbu'],
             ['name' => 'Yuan', 'code' => 'RMB', 'symbol' => '¥'],
         ];
         foreach ($devises as $devise) {

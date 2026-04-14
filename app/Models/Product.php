@@ -25,6 +25,7 @@ class Product extends Model
         'unit_per_package',
         'number_of_cartons',
         'is_archived',
+        'container_id',
     ];
 
     protected $casts = [
@@ -74,5 +75,10 @@ class Product extends Model
     public function supplierProducts()
     {
         return $this->hasMany(SupplierProduct::class);
+    }
+
+    public function container()
+    {
+        return $this->belongsTo(Container::class);
     }
 }
