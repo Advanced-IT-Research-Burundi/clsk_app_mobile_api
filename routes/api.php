@@ -42,4 +42,5 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('product_reportss', [ProductController::class,'report']);
     Route::post('products/report', [ProductController::class, 'report']); // allow filters in POST body
     Route::get('products/report/export', [ProductController::class, 'exportReport']);
+    Route::get('products/report/pdf', [ProductController::class, 'exportPdfReport']);
 });
