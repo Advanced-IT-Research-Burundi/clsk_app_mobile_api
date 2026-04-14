@@ -42,6 +42,9 @@ class ProductController extends Controller
             'number_of_cartons' => 'nullable|integer',
             'exchange_rate' => 'nullable|numeric',
             'photo' => 'nullable|file|image',
+            'customs_price' => 'nullable|numeric',
+            'cbm' => 'nullable|numeric',
+            'customs_price_currency' => 'nullable|in:USD,BIF,RMB',
             //'date' => 'required|date',
             'category_id' => 'nullable|exists:categories,id',
             'devise_id' => 'required|exists:devises,id',
@@ -88,6 +91,9 @@ class ProductController extends Controller
             'packaging' => 'nullable|string',
             'unit_per_package' => 'nullable|integer',
             'exchange_rate' => 'nullable|numeric',
+            'customs_price' => 'nullable|numeric',
+            'cbm' => 'nullable|numeric',
+            'customs_price_currency' => 'nullable|in:USD,BIF,RMB',
             'photos' => 'nullable|array',
             'date' => 'required|date',
             'category_id' => 'required|exists:categories,id',
@@ -225,6 +231,12 @@ class ProductController extends Controller
         if ($request->filled('category_id')) {
             $query->where('category_id', $request->input('category_id'));
         }
+        if ($request->filled('supplier_id')) {
+            $query->where('supplier_id', $request->input('supplier_id'));
+        }
+        if ($request->filled('container_id')) {
+            $query->where('container_id', $request->input('container_id'));
+        }
         if ($request->filled('devise_id')) {
             $query->where('devise_id', $request->input('devise_id'));
         }
@@ -250,10 +262,44 @@ class ProductController extends Controller
                 'supplier_id' => $p->supplier_id,
                 'supplier_name' => $p->supplier ? $p->supplier->name : null,
                 'date' => $p->date ? $p->date->format('Y-m-d') : null,
+                'customs_price' => $p->customs_price + 0,
+                'customs_price_currency' => $p->customs_price_currency,
+                'cbm' => $p->cbm + 0,
             ];
         });
 
         return response()->json($data->values());
+    }
+
+    /**
+     * Export the products report as PDF
+     */
+    public function exportPdfReport(Request $request)
+    {
+        $query = Product::with(['category.type', 'devise', 'user', 'photos', 'supplier', 'container'])->latest();
+
+        if ($request->filled('start_date')) {
+            $query->whereDate('date', '>=', $request->input('start_date'));
+        }
+        if ($request->filled('end_date')) {
+            $query->whereDate('date', '<=', $request->input('end_date'));
+        }
+        if ($request->filled('supplier_id')) {
+            $query->where('supplier_id', $request->input('supplier_id'));
+        }
+        if ($request->filled('container_id')) {
+            $query->where('container_id', $request->input('container_id'));
+        }
+        if ($request->filled('category_id')) {
+            $query->where('category_id', $request->input('category_id'));
+        }
+
+        $products = $query->get();
+        
+        // Use Barryvdh\DomPDF\Facade\Pdf for generation
+        $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('reports.products', compact('products'));
+        
+        return $pdf->download('rapport-produits.pdf');
     }
 
     /**

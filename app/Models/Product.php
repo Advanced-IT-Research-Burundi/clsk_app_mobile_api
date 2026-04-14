@@ -26,6 +26,9 @@ class Product extends Model
         'number_of_cartons',
         'is_archived',
         'container_id',
+        'customs_price',
+        'cbm',
+        'customs_price_currency',
     ];
 
     protected $casts = [
@@ -35,6 +38,8 @@ class Product extends Model
         'unit_per_package' => 'integer',
         'number_of_cartons' => 'integer',
         'is_archived' => 'boolean',
+        'customs_price' => 'decimal:2',
+        'cbm' => 'decimal:4',
     ];
 
     public function scopeActive($query)
