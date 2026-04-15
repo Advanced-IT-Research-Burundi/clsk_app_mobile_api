@@ -29,6 +29,9 @@ class Product extends Model
         'customs_price',
         'cbm',
         'customs_price_currency',
+        'total_bif',
+        'total_usd',
+        'total_rmb',
     ];
 
     protected $casts = [
@@ -40,6 +43,9 @@ class Product extends Model
         'is_archived' => 'boolean',
         'customs_price' => 'decimal:2',
         'cbm' => 'decimal:4',
+        'total_bif' => 'decimal:2',
+        'total_usd' => 'decimal:2',
+        'total_rmb' => 'decimal:2',
     ];
 
     public function scopeActive($query)

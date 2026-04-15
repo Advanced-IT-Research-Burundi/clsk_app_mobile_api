@@ -45,6 +45,9 @@ class ProductController extends Controller
             'customs_price' => 'nullable|numeric',
             'cbm' => 'nullable|numeric',
             'customs_price_currency' => 'nullable|in:USD,BIF,RMB',
+            'total_bif' => 'nullable|numeric',
+            'total_usd' => 'nullable|numeric',
+            'total_rmb' => 'nullable|numeric',
             //'date' => 'required|date',
             'category_id' => 'nullable|exists:categories,id',
             'devise_id' => 'required|exists:devises,id',
@@ -94,6 +97,9 @@ class ProductController extends Controller
             'customs_price' => 'nullable|numeric',
             'cbm' => 'nullable|numeric',
             'customs_price_currency' => 'nullable|in:USD,BIF,RMB',
+            'total_bif' => 'nullable|numeric',
+            'total_usd' => 'nullable|numeric',
+            'total_rmb' => 'nullable|numeric',
             'photos' => 'nullable|array',
             'date' => 'required|date',
             'category_id' => 'required|exists:categories,id',
@@ -265,6 +271,9 @@ class ProductController extends Controller
                 'customs_price' => $p->customs_price + 0,
                 'customs_price_currency' => $p->customs_price_currency,
                 'cbm' => $p->cbm + 0,
+                'total_bif' => $p->total_bif + 0,
+                'total_usd' => $p->total_usd + 0,
+                'total_rmb' => $p->total_rmb + 0,
             ];
         });
 

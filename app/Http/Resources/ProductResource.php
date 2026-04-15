@@ -52,6 +52,9 @@ class ProductResource extends JsonResource
             'container_id' => $this->container_id,
             'container_name' => $this->container ? $this->container->name : null,
             'container_serial' => $this->container ? $this->container->serial_number : null,
+            'total_bif' => $this->total_bif,
+            'total_usd' =>  $this->total_usd,
+            'total_rmb' =>  $this->total_rmb,
         ];
     }
 }
