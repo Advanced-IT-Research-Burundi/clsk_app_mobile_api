@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\ProductResource;
 use App\Models\Product;
+use App\Jobs\ProcessProductImage;
 use Illuminate\Http\Request;
 
 class ProductController extends Controller
@@ -62,11 +63,19 @@ class ProductController extends Controller
             // 'devise_id' => 1,
         ]);
 
-        // Handle photo upload if provided
+        // Handle photo upload asynchronously via Job
         if ($request->hasFile('photo')) {
-            $imageName = time().'.'.$request->photo->extension();
-            $path = $request->file('photo')->move('uploads/products', $imageName);
-            $product->photos()->create(['url' => $path]);
+            $tempName = time() . '_' . uniqid() . '.' . $request->photo->extension();
+            $tempPath = storage_path('app/temp');
+            
+            if (!file_exists($tempPath)) {
+                mkdir($tempPath, 0755, true);
+            }
+            
+            $request->file('photo')->move($tempPath, $tempName);
+            $fullTempPath = $tempPath . '/' . $tempName;
+            
+            ProcessProductImage::dispatch($product, $fullTempPath, $request->photo->getClientOriginalName());
         }
 
         return new ProductResource($product->load(['category.type', 'devise', 'photos']));
