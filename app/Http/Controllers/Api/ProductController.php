@@ -226,7 +226,7 @@ class ProductController extends Controller
      */
     public function report(Request $request)
     {
-        $query = Product::with(['category', 'devise', 'user', 'photos', 'supplier'])->latest();
+        $query = Product::with(['category', 'devise', 'user', 'photos', 'supplier', 'container'])->latest();
 
         if ($request->filled('start_date')) {
             $query->whereDate('date', '>=', $request->input('start_date'));
@@ -274,6 +274,9 @@ class ProductController extends Controller
                 'total_bif' => $p->total_bif + 0,
                 'total_usd' => $p->total_usd + 0,
                 'total_rmb' => $p->total_rmb + 0,
+                'container_id' => $p->container_id,
+                'container_name' => $p->container ? $p->container->name : null,
+                'container_serial' => $p->container ? $p->container->serial_number : null,
             ];
         });
 
