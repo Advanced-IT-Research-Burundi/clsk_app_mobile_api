@@ -3,6 +3,7 @@
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\CategoryController;
 use App\Http\Controllers\Api\ContainerController;
+use App\Http\Controllers\Api\DepenseProduitController;
 use App\Http\Controllers\Api\DeviseController;
 use App\Http\Controllers\Api\ProductController;
 use App\Http\Controllers\Api\SupplierController;
@@ -37,6 +38,13 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/users', [AuthController::class, 'getUsers']);
     Route::post('/users', [AuthController::class, 'addUser']);
     Route::put('/users/{user}', [AuthController::class, 'updateUserData']);
+    // Dépenses produits
+    Route::get('depenses', [DepenseProduitController::class, 'index']);
+    Route::get('products/{product}/depenses', [DepenseProduitController::class, 'byProduct']);
+    Route::post('depenses', [DepenseProduitController::class, 'store']);
+    Route::put('depenses/{depense}', [DepenseProduitController::class, 'update']);
+    Route::delete('depenses/{depense}', [DepenseProduitController::class, 'destroy']);
+
     // Product reports
     // Route::get('products/report', [ProductController::class, 'report']);
     Route::get('product_reportss', [ProductController::class,'report']);
