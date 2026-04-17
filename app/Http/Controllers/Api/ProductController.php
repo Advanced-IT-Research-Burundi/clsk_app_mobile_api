@@ -64,18 +64,24 @@ class ProductController extends Controller
         ]);
 
         // Handle photo upload asynchronously via Job
+        // if ($request->hasFile('photo')) {
+        //     $tempName = time() . '_' . uniqid() . '.' . $request->photo->extension();
+        //     $tempPath = storage_path('app/temp');
+            
+        //     if (!file_exists($tempPath)) {
+        //         mkdir($tempPath, 0755, true);
+        //     }
+            
+        //     $request->file('photo')->move($tempPath, $tempName);
+        //     $fullTempPath = $tempPath . '/' . $tempName;
+            
+        //     ProcessProductImage::dispatch($product, $fullTempPath, $request->photo->getClientOriginalName());
+        // }
+
         if ($request->hasFile('photo')) {
-            $tempName = time() . '_' . uniqid() . '.' . $request->photo->extension();
-            $tempPath = storage_path('app/temp');
-            
-            if (!file_exists($tempPath)) {
-                mkdir($tempPath, 0755, true);
-            }
-            
-            $request->file('photo')->move($tempPath, $tempName);
-            $fullTempPath = $tempPath . '/' . $tempName;
-            
-            ProcessProductImage::dispatch($product, $fullTempPath, $request->photo->getClientOriginalName());
+            $imageName = time().'.'.$request->photo->extension();
+            $path = $request->file('photo')->move('uploads/products', $imageName);
+            $product->photos()->create(['url' => $path]);
         }
 
         return new ProductResource($product->load(['category.type', 'devise', 'photos']));
